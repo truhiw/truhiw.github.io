@@ -1,0 +1,121 @@
+body {
+  background-color: #1e1e1e;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+body.light-theme {
+  background-color: #f5f5f5; 
+}
+
+.terminal {
+  width: 90%;
+  max-width: 800px;
+  height: 70%;
+  background: linear-gradient(to bottom right, #111, #333);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+
+.terminal.light-theme {
+  background: linear-gradient(to bottom right, #eee, #ccc);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  box-shadow: inset 0 -1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.header .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.header .dot.red {
+  background: radial-gradient(circle, #ff605c, #c22d2a);
+}
+
+.header .dot.yellow {
+  background: radial-gradient(circle, #ffbd44, #c8921a);
+}
+
+.header .dot.green {
+  background: radial-gradient(circle, #00ca4e, #007a30);
+}
+
+.screen {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+
+.screen::-webkit-scrollbar {
+  width: 8px;
+}
+
+.screen::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
+
+.screen::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}
+
+.input, .output {
+  font-size: 1rem;
+}
+
+.prompt {
+  margin-right: 5px;
+}
+
+#commandInput {
+  background: none;
+  border: none;
+  outline: none;
+  color: inherit;
+  flex: 1;
+  font-size: 1rem;
+  padding: 3px;
+}
+
+.clock {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: #00ff00;
+}
+
+.progress-bar {
+  width: 100%;
+  background: #444;
+  border-radius: 5px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progress {
+  height: 10px;
+  background: linear-gradient(to right, #00ff00, #007700);
+  transition: width 0.3s ease-in-out;
+}

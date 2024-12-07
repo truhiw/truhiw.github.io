@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="title">Terminal</span>
+      <span id="clock" class="clock"></span>
+    </div>
+    <div class="screen">
+      <div class="output">
+        <span id="typed-output"></span>
+      </div>
+      <div class="input">
+        <span class="prompt">$</span>
+        <input type="text" id="commandInput" autocomplete="off" autofocus>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
