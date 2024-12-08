@@ -1,5 +1,8 @@
 const commandInput = document.getElementById('commandInput');
 const screen = document.querySelector('.screen');
+const audio = new Audio('music.mp3');
+let musicPlaying = false;
+let flipState = null;
 
 const typed = new Typed('#typed-output', {
   strings: [
@@ -12,7 +15,9 @@ const typed = new Typed('#typed-output', {
     'Gõ "play" để bắt đầu trò chơi rock-paper-scissors.',
     'Gõ "theme <light|dark>" để thay đổi giao diện.',
     'Gõ "clear" để xóa màn hình.',
-  ],
+    'Gõ "music" để bật/tắt nhạc nền.',
+    'Gõ "flip" để tung đồng xu.'
+    ],
   typeSpeed: 50,
   backSpeed: 25,
   loop: true,
@@ -63,6 +68,8 @@ function processCommand(command) {
       appendOutput('  theme <light|dark> - Đổi giao diện');
       appendOutput('  font +|- - Điều chỉnh cỡ chữ');
       appendOutput('  clear - Xóa màn hình');
+      appendOutput('  music - Bật/tắt nhạc nền');
+      appendOutput('  flip - Tung đồng xu');
       break;
 
     case 'about':
@@ -108,6 +115,21 @@ function processCommand(command) {
     case 'paper':
     case 'scissors':
       playMove(cmd);
+      break;
+case 'volume':
+      setVolume(argString);
+      break;
+    case 'exit':
+      appendOutput('Tạm biệt! Hẹn gặp lại!');
+      setTimeout(() => { window.close(); }, 2000);
+      break;
+
+    case 'music':
+      toggleMusic();
+      break;
+
+    case 'flip':
+      flipCoin();
       break;
 
     default:
@@ -254,16 +276,25 @@ function playMove(userChoice) {
   handleMove(userChoice);
 }
 
-function appendOutput(text) {
+function appendOutput(text, className = '') {
   const output = document.createElement('div');
   output.innerHTML = text;
-  const lineBreak = document.createElement('div');
+  if (className) {
+    output.classList.add(className);
+  }
+  const outputElement = screen.querySelector('.output');
+  if (outputElement) {
+    output.style.color = 'rgb(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ')';
+  }
+  const lineBreak = document.createElement('div'); 
   screen.insertBefore(output, screen.querySelector('.input'));
   screen.insertBefore(lineBreak, screen.querySelector('.input'));
+  
   screen.scrollTop = screen.scrollHeight;
 }
 
 function clearScreen() {
+  rpsGame = null;
   const outputs = screen.querySelectorAll('div:not(.input)');
   outputs.forEach((output) => output.remove());
 }
@@ -307,4 +338,50 @@ function addProgressBar(skill, percentage) {
 
   progressBar.innerHTML = `<strong>${skill}:</strong> ${progressText}`;
   screen.insertBefore(progressBar, screen.querySelector('.input'));
+}
+
+function setVolume(volumeArg) {
+  const volume = parseInt(volumeArg);
+  if (isNaN(volume) || volume < 0 || volume > 100) {
+    appendOutput('Cú pháp: volume <0-100>');
+  } else {
+    audio.volume = volume / 100; 
+    appendOutput(`Đã thay đổi âm lượng thành: ${volume}%`);
+  }
+}
+
+function toggleMusic() {
+  if (musicPlaying) {
+    audio.pause();
+    appendOutput('Nhạc nền đã tắt.');
+  } else {
+    audio.loop = true;
+    audio.play();
+    appendOutput('Nhạc nền đã bật.');
+  }
+  musicPlaying = !musicPlaying;
+}
+
+function updateSongInfo() {
+  const songInfoElement = document.getElementById('songInfo');
+  const currentTime = audio.currentTime;
+  const duration = audio.duration;
+
+  if (!duration || isNaN(duration)) return;
+
+  const currentMinutes = Math.floor(currentTime / 60);
+  const currentSeconds = Math.floor(currentTime % 60);
+  const durationMinutes = Math.floor(duration / 60);
+  const durationSeconds = Math.floor(duration % 60);
+
+  // Format time as mm:ss
+  const formattedCurrentTime = `${currentMinutes}:${currentSeconds < 10 ? '0' + currentSeconds : currentSeconds}`;
+  const formattedDuration = `${durationMinutes}:${durationSeconds < 10 ? '0' + durationSeconds : durationSeconds}`;
+
+  songInfoElement.textContent = `💿 ${formattedCurrentTime}/${formattedDuration}`;
+}
+audio.addEventListener('timeupdate', updateSongInfo);
+function flipCoin() {
+  const result = Math.random() < 0.5 ? 'Ngửa' : 'Hào';
+  appendOutput(`Kết quả tung đồng xu: ${result}`);
 }
