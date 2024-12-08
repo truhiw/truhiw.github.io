@@ -1,6 +1,6 @@
 const commandInput = document.getElementById('commandInput');
 const screen = document.querySelector('.screen');
-const audio = new Audio('music.mp3');
+const audio = new Audio();
 let musicPlaying = false;
 let flipState = null;
 
@@ -22,6 +22,25 @@ const typed = new Typed('#typed-output', {
   backSpeed: 25,
   loop: true,
 });
+
+const playlist = [
+  { name: 'Intro: End of the World', file: './eternalsunshine/intro__end_of_the_world_.mp3' },
+  { name: 'Don\'t Wanna Break Up Again', file: './eternalsunshine/don_t_wanna_break_up_again.mp3' },
+  { name: 'Eternal Sunshine', file: './eternalsunshine/eternal_sunshine.mp3' },
+  { name: 'Imperfect for You', file: './eternalsunshine/imperfect_for_you.mp3' },
+  { name: 'I Wish I Hated You', file: './eternalsunshine/i_wish_i_hated_you.mp3' },
+  { name: 'Ordinary Things (feat. Nonna)', file: './eternalsunshine/ordinary_things__feat__Nonna_.mp3' },
+  { name: 'Saturn Returns Interlude', file: './eternalsunshine/Saturn_Returns_Interlude.mp3' },
+  { name: 'Supernatural', file: './eternalsunshine/supernatural.mp3' },
+  { name: 'The Boy is Mine', file: './eternalsunshine/the_boy_is_mine.mp3' },
+  { name: 'True Story', file: './eternalsunshine/true_story.mp3' },
+  { name: 'We Can\'t Be Friends (Wait for Your Love)', file: './eternalsunshine/we_can_t_be_friends__wait_for_your_love_.mp3' },
+  { name: 'Yes, and?', file: './eternalsunshine/yes__and_.mp3' },
+  { name: 'Bye', file: './eternalsunshine/bye.mp3' },
+];
+
+
+let currentSongIndex = 0;
 
 let commandHistory = [];
 let historyIndex = -1;
@@ -116,12 +135,26 @@ function processCommand(command) {
     case 'scissors':
       playMove(cmd);
       break;
-case 'volume':
+
+    case 'volume':
       setVolume(argString);
       break;
+
     case 'exit':
       appendOutput('Tạm biệt! Hẹn gặp lại!');
       setTimeout(() => { window.close(); }, 2000);
+      break;
+
+     case 'list':
+      listSongs();
+      break;
+
+    case 'next':
+      nextSong();
+      break;
+
+    case 'prev':
+      prevSong();
       break;
 
     case 'music':
@@ -349,17 +382,30 @@ function setVolume(volumeArg) {
     appendOutput(`Đã thay đổi âm lượng thành: ${volume}%`);
   }
 }
-
-function toggleMusic() {
-  if (musicPlaying) {
-    audio.pause();
-    appendOutput('Nhạc nền đã tắt.');
-  } else {
-    audio.loop = true;
+function playSong(index) {
+  if (index >= 0 && index < playlist.length) {
+    currentSongIndex = index;
+    audio.src = playlist[index].file;
     audio.play();
-    appendOutput('Nhạc nền đã bật.');
+    audio.volume = 20 / 100; 
+    musicPlaying = true;
+    appendOutput(`Đang phát: ${playlist[index].name}`);
+  } else {
+    appendOutput('Không tìm thấy bài hát.');
   }
-  musicPlaying = !musicPlaying;
+}
+
+function nextSong() {
+  playSong((currentSongIndex + 1) % playlist.length);
+}
+
+function prevSong() {
+  playSong((currentSongIndex - 1 + playlist.length) % playlist.length);
+}
+
+function listSongs() {
+  appendOutput('Danh sách bài hát:');
+  playlist.forEach((song, index) => appendOutput(`${index + 1}. ${song.name}`));
 }
 
 function updateSongInfo() {
@@ -378,9 +424,24 @@ function updateSongInfo() {
   const formattedCurrentTime = `${currentMinutes}:${currentSeconds < 10 ? '0' + currentSeconds : currentSeconds}`;
   const formattedDuration = `${durationMinutes}:${durationSeconds < 10 ? '0' + durationSeconds : durationSeconds}`;
 
-  songInfoElement.textContent = `💿 ${formattedCurrentTime}/${formattedDuration}`;
+  songInfoElement.textContent = `🎵 ${playlist[currentSongIndex].name} | ${formattedCurrentTime}/${formattedDuration}`;
 }
 audio.addEventListener('timeupdate', updateSongInfo);
+
+function toggleMusic() {
+  if (musicPlaying) {
+    audio.pause();
+    appendOutput('Nhạc nền đã tắt.');
+  } else {
+    if (!audio.src) {
+      playSong(currentSongIndex); // Phát bài đầu tiên nếu chưa có bài
+    } else {
+      audio.play();
+      appendOutput(`Tiếp tục phát: ${playlist[currentSongIndex].name}`);
+    }
+  }
+  musicPlaying = !musicPlaying;
+}
 function flipCoin() {
   const result = Math.random() < 0.5 ? 'Ngửa' : 'Hào';
   appendOutput(`Kết quả tung đồng xu: ${result}`);
